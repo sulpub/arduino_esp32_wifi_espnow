@@ -6,7 +6,7 @@ uint32_t delta_time_us = 0;
 
 struct DataPacket {
   uint8_t data[3];
-  uint8_t time[3];
+  //uint8_t time[3];
 };
 
 void onDataReceive(const uint8_t *macAddr, const uint8_t *incomingData, int len) {
@@ -21,23 +21,40 @@ void onDataReceive(const uint8_t *macAddr, const uint8_t *incomingData, int len)
 
   DataPacket packet;
   memcpy(&packet, incomingData, sizeof(packet));
-  counter=((packet.data[0] << 16) + (packet.data[1] << 8) + (packet.data[2]));
-  delta_time_us=((packet.time[0] << 16) + (packet.time[1] << 8) + (packet.time[2]));
-  
+  counter = ((packet.data[0] << 16) + (packet.data[1] << 8) + (packet.data[2]));
+  //delta_time_us = ((packet.time[0] << 16) + (packet.time[1] << 8) + (packet.time[2]));
 
-  Serial.print(counter);
-  Serial.print(",");
-  Serial.print(delta_time_us);
-  /*
-  for (int i = 0; i < 3; i++) Serial.print(packet.data[i], HEX);
-  Serial.print(",");
-  for (int i = 0; i < 3; i++) Serial.print(packet.time[i], HEX);
-  */
-  Serial.println();
+  Serial.println(counter);
+
+
+  // Serial.print(counter);
+  // Serial.print(",");
+  // Serial.print(delta_time_us);
+  // /*
+  // for (int i = 0; i < 3; i++) Serial.print(packet.data[i], HEX);
+  // Serial.print(",");
+  // for (int i = 0; i < 3; i++) Serial.print(packet.time[i], HEX);
+  // */
+  // Serial.println();
 }
 
 void setup() {
   Serial.begin(1500000);
+  // print MAC ADRESS OF THE RECEIVER
+
+  delay(100);
+  Serial.println();
+
+  uint8_t mac[6];
+  WiFi.macAddress(mac);
+
+  Serial.print("Adresse MAC brute : ");
+  for (int i = 0; i < 6; i++) {
+    if (i > 0) Serial.print(":");
+    Serial.print(mac[i], HEX);
+  }
+  Serial.println();
+
   WiFi.mode(WIFI_STA);
   if (esp_now_init() != ESP_OK) {
     Serial.println("ESP-NOW initialization failed!");
